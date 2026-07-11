@@ -1,13 +1,16 @@
 name: Release Obsidian plugin
 
-# 打一个 x.y.z 的 tag 即触发：自动构建 + 建 Release 挂三件套产物。
+# 打一个 x.y.z 的 tag 即触发：CI 构建 → 生成溯源证明(attestation) → 建 Release 挂三件套。
+# 由 CI 独家产出发布产物，保证 Release 资产字节 == 被签名的字节（本地 release.mjs 不再建 Release）。
 on:
   push:
     tags:
       - '[0-9]+.[0-9]+.[0-9]+'
 
 permissions:
-  contents: write
+  contents: write        # 建 Release
+  id-token: write        # attestation 用 OIDC 身份签名
+  attestations: write    # 写入构建溯源证明
 
 jobs:
   release:
@@ -24,12 +27,19 @@ jobs:
           npm install
           npm run build
 
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: |
+            main.js
+            manifest.json
+            styles.css
+
       - name: Create release (idempotent)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ github.ref_name }}
         run: |
-          # 若本地 release.mjs 已创建同名 Release，则跳过，避免冲突。
           if gh release view "$TAG" >/dev/null 2>&1; then
             echo "Release $TAG already exists — skipping."
           else
