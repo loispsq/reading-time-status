@@ -2,8 +2,8 @@
 main.js
 node_modules/
 
-# npm
-package-lock.json
+# NOTE: package-lock.json is committed on purpose — Obsidian's build
+# verification needs a lockfile to reproduce the build byte-for-byte.
 
 # os / ide
 .DS_Store
