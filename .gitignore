@@ -1,0 +1,13 @@
+# build
+main.js
+node_modules/
+
+# npm
+package-lock.json
+
+# os / ide
+.DS_Store
+.vscode/
+
+# obsidian data (若在 vault 内调试)
+data.json
