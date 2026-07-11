@@ -14,7 +14,8 @@ interface ReadingTimeSettings {
 
 const DEFAULT_SETTINGS: ReadingTimeSettings = {
   wordsPerMinute: 200,
-  showWordCount: true,
+  // 默认只显示阅读时长；字数交给 Obsidian 自带的字数统计，避免重复。
+  showWordCount: false,
 };
 
 // CJK-aware 字数统计：中日韩每字算一词，其余按空白切分。
